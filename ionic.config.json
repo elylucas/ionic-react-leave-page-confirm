@@ -1,0 +1,7 @@
+{
+  "name": "react-backbutton-cancel",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
