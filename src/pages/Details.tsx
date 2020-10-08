@@ -25,12 +25,19 @@ const Details: React.FC<DetailsProps> = () => {
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
-    const unblock = history.block(() => {
-      if (isDirty) {
-        return "You have unsaved changes, are you sure you want to leave?";
-      }
-    });
-    return () => unblock();
+    let unblock: ReturnType<typeof history.block>;
+    if (isDirty) {
+      window.onbeforeunload = () => true;
+      unblock = history.block(() => {
+        const message =
+          "You have unsaved changes, are you sure you want to leave?";
+        return message;
+      });
+    }
+    return () => {
+      window.onbeforeunload = null;
+      unblock && unblock();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDirty]);
 
