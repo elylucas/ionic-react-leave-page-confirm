@@ -34,26 +34,22 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import Details from "./pages/Details";
 
 const App: React.FC = () => {
-  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [leaveConfirmMessage, setLeaveConfirmMessage] = useState<string>();
-  const modalCallback = useRef<(ok: boolean) => void>();
+  const confirmCallback = useRef<(ok: boolean) => void>();
 
   return (
     <IonApp>
       <IonReactRouter
         getUserConfirmation={(message, callback) => {
           setLeaveConfirmMessage(message);
-          modalCallback.current = callback;
-          setShowLeaveConfirm(true);
+          confirmCallback.current = callback;
         }}
       >
         <IonTabs>
           <IonRouterOutlet>
             <Route path="/tab1" component={Tab1} exact={true} />
-            <Route path="/tab1/details" component={Details} exact={true} />
             <Route path="/tab2" component={Tab2} exact={true} />
             <Route path="/tab3" component={Tab3} />
             <Route
@@ -78,24 +74,24 @@ const App: React.FC = () => {
           </IonTabBar>
         </IonTabs>
         <IonAlert
-          isOpen={showLeaveConfirm}
+          isOpen={!!leaveConfirmMessage}
           message={leaveConfirmMessage}
           buttons={[
             {
               text: "No",
               handler: () => {
-                modalCallback.current && modalCallback.current(false);
+                confirmCallback.current && confirmCallback.current(false);
               },
             },
             {
               text: "Yes",
               handler: () => {
-                modalCallback.current && modalCallback.current(true);
+                confirmCallback.current && confirmCallback.current(true);
               },
             },
           ]}
-          onDidDismiss={() => setShowLeaveConfirm(false)}
-        ></IonAlert>
+          onDidDismiss={() => setLeaveConfirmMessage(undefined)}
+        />
       </IonReactRouter>
     </IonApp>
   );

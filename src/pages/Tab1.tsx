@@ -1,9 +1,32 @@
-import React from 'react';
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import './Tab1.css';
+import React, { useEffect, useState } from 'react';
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  useIonViewWillLeave,
+} from '@ionic/react';
+import './Tab2.css';
+import { Prompt } from 'react-router';
 
 const Tab1: React.FC = () => {
+  const [text, setText] = useState('');
 
+useEffect(() => {
+  if (text) {
+    window.onbeforeunload = () => true;
+  }
+  return () => {
+    window.onbeforeunload = null;
+  };
+}, [text]);
+
+  useIonViewWillLeave(() => {
+    setText('');
+  });
   return (
     <IonPage>
       <IonHeader>
@@ -12,7 +35,26 @@ const Tab1: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonButton routerLink="/tab1/details">Go to details</IonButton>
+        <IonInput
+          value={text}
+          placeholder="Name"
+          onIonChange={(e) => {
+            setText(e.detail.value!);
+          }}
+        ></IonInput>
+
+        <IonButton
+          expand="block"
+          onClick={() => {
+            setText('');
+          }}
+        >
+          Submit
+        </IonButton>
+        <Prompt
+          when={!!text}
+          message="You have unsaved changes, are you sure you want to leave?"
+        />
       </IonContent>
     </IonPage>
   );
